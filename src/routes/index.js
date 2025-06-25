@@ -1,0 +1,30 @@
+const UserRouter = require("./UserRouter");
+const PaymentRouter = require("./PaymentRouter");
+const PostRouter = require("./PostRouter");
+const ChatBotRouter = require("./ChatBotRouter");
+const WalletRouter = require("./WalletRouter");
+const MessageRouter = require("./MessageRouter");
+const NotificationRouter = require("./NotificationRouter");
+const ConversationRouter = require("./ConversationRouter");
+const AdvertisementRouter = require("./AdvertisementRouter");
+const CategoryRouter = require("./CategoryRouter");
+const SurveyRouter = require("./SurveyRouter");
+const SurveyResponseRouter = require("./SurveyResponseRouter");
+const TransactionRouter = require("./TransactionRouter");
+const routes = (app) => {
+  app.use("/api/user", UserRouter);
+  app.use("/api/payment", PaymentRouter);
+  app.use("/api/post", PostRouter);
+  app.use("/api/gemini", ChatBotRouter);
+  app.use("/api/wallet", WalletRouter);
+  app.use("/api/message", MessageRouter);
+  app.use("/api/notification", NotificationRouter);
+  app.use("/api/advertisements", AdvertisementRouter);
+  app.use("/api/conversation", ConversationRouter);
+  app.use("/api/category", CategoryRouter);
+  app.use("/api/survey", SurveyRouter);
+  app.use("/api/surveyResponse", SurveyResponseRouter);
+  app.use("/api/transactions", TransactionRouter);
+};
+
+module.exports = routes;

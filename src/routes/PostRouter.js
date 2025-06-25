@@ -1,0 +1,24 @@
+const express = require("express");
+const router = express.Router();
+const postController = require('../controllers/PostController');
+const { authUserMiddleware, authMiddleware, authUserV2Middleware } = require("../middleware/authMiddleware");
+
+router.post("/create", postController.createPost);
+router.get("/getAllPosts", postController.getAllPosts);
+router.get("/getPendingPosts", postController.getPendingPosts);
+router.get("/getApprovedPosts", postController.getApprovedPosts);
+router.get("/getRejectedPosts", postController.getRejectedPosts);
+router.get("/getPostById/:id", postController.getPostById);
+router.get("/getPostByUserId/:id", postController.getPostByUserId);
+router.put("/updatePost/:id", postController.updatePost);
+router.delete("/deletePost/:id", postController.deletePost);
+router.post("/aprovePost/:id", authMiddleware, postController.approvePost);
+router.post("/rejectPost/:id", authMiddleware, postController.rejectPost);
+router.get("/getApprovedAndPaidPosts", postController.getApprovedAndPaidPosts);
+router.put("/:id/sold", authUserV2Middleware, postController.markAsSold);
+router.put("/:id/purchased", authUserV2Middleware, postController.markAsPurchased);
+router.get("/purchased", authUserV2Middleware, postController.getPurchasedPosts);
+router.post("/:id/rating", authUserV2Middleware, postController.submitRating);
+router.get("/rating", authUserV2Middleware, postController.getRating);
+router.get("/average-rating", postController.getAverageRating);
+module.exports = router;
