@@ -257,7 +257,10 @@ cron.schedule('0 0 * * *', () => {
     expireAds();
 });
 //connet mongodb
-mongoose.connect(process.env.MONGO_DB)
+mongoose.connect(process.env.DB_CONNECTION_CLOUD, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
     .then(() => {
         console.log("Connect DB success!");
     })
