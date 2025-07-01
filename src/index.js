@@ -207,6 +207,38 @@ io.on("connection", (socket) => {
     socket.on("disconnect", () => {
         console.log("Client disconnected:", socket.id);
     });
+
+     // Khi client vào trang -> join vào "room" theo userId
+    socket.on('joinNotificationRoom', (userId) => {
+        socket.join(`notification_${userId}`);
+        console.log(`User ${userId} joined notification room`);
+    });
+
+    // Lấy số lượng chưa đọc
+    socket.on("getUnreadNotificationCount", async (userId) => {
+    try {
+        if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+        console.log("Invalid userId:", userId);
+        return;
+        }
+
+        const count = await Notification.countDocuments({ userId, isRead: false });
+        socket.emit("notificationUnreadCount", count);
+    } catch (err) {
+        console.error("Error getUnreadNotificationCount:", err);
+    }
+    });
+
+
+    // Đánh dấu đã đọc toàn bộ
+    socket.on('markNotificationsAsRead', async (userId) => {
+        try {
+            await Notification.updateMany({ userId, isRead: false }, { isRead: true });
+            io.to(`notification_${userId}`).emit('notificationUnreadCount', 0);
+        } catch (err) {
+            console.error('Error markNotificationsAsRead:', err);
+        }
+    });
 });
 
 app.use(cors({

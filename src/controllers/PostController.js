@@ -221,7 +221,7 @@ const approvePost = async (req, res) => {
       userId: updatedPost.userId,
       postId: updatedPost._id,
       type: "posting_fee",
-      amount: 5000,
+      amount: 10000,
     });
 
     updatedPost.paymentRequests.push(paymentRequest._id);
