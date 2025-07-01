@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Notification = require('../models/NotificationModel');
-
+const { io } = require('../index');
 router.get('/:userId', async (req, res) => {
   const { userId } = req.params;
   const notifications = await Notification.find({ userId }).populate('postId').populate('extraData.requestId');

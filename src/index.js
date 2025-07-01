@@ -13,7 +13,7 @@ const ObjectId = mongoose.Types.ObjectId;
 const { findOrCreateConversation } = require('./controllers/MessageController');
 const { expireAds } = require('./controllers/AdvertisementController');
 const cron = require('node-cron');
-
+const Notification = require('./models/NotificationModel'); 
 dotenv.config();
 
 const app = express();
@@ -208,7 +208,7 @@ io.on("connection", (socket) => {
         console.log("Client disconnected:", socket.id);
     });
 
-     // Khi client vào trang -> join vào "room" theo userId
+    // Khi client vào trang -> join vào "room" theo userId
     socket.on('joinNotificationRoom', (userId) => {
         socket.join(`notification_${userId}`);
         console.log(`User ${userId} joined notification room`);
@@ -257,18 +257,14 @@ cron.schedule('0 0 * * *', () => {
     expireAds();
 });
 //connet mongodb
-mongoose.connect(process.env.DB_CONNECTION_CLOUD, {
-    dbName: process.env.DB_NAME,
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-})
+mongoose.connect(process.env.MONGO_DB)
     .then(() => {
-        console.log("✅ Connected to MongoDB Atlas");
+        console.log("Connect DB success!");
     })
     .catch((err) => {
-        console.error("❌ MongoDB connection error:", err);
+        console.error("DB connection error:", err);
     });
 
 http.listen(port, () => {
-    console.log(`✅ Server is running on port ${port}`);
+    console.log(`Server is running on port ${port}`);
 });

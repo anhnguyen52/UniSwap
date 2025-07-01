@@ -210,4 +210,71 @@ exports.getActiveAdvertisements = async (req, res) => {
   }
 };
 
+// 7. Đếm số quảng cáo active theo vị trí
+exports.getAdCountByPosition = async (req, res) => {
+  try {
+    const { position } = req.query;
+    if (!position) {
+      return res.status(400).json({ message: "Thiếu vị trí (position)" });
+    }
+
+    const count = await Advertisement.countDocuments({
+      position,
+      status: { $in: ["approved", "active"] },
+      endDate: { $gt: new Date() } // vẫn còn hiệu lực
+    });
+
+    res.json({ count });
+  } catch (err) {
+    console.error("❌ Lỗi getAdCountByPosition:", err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// 8. Xóa quảng cáo (chỉ cho phép xóa nếu đang là pending)
+exports.deleteAd = async (req, res) => {
+  try {
+    const ad = await Advertisement.findById(req.params.id);
+
+    if (!ad) {
+      return res.status(404).json({ message: "Không tìm thấy quảng cáo" });
+    }
+
+    if (ad.status !== "pending") {
+      return res.status(400).json({ message: "Chỉ có thể xóa quảng cáo đang chờ duyệt (pending)" });
+    }
+
+    await Advertisement.findByIdAndDelete(req.params.id);
+    res.json({ message: "🗑️ Đã xóa quảng cáo thành công" });
+  } catch (err) {
+    console.error("❌ Lỗi deleteAd:", err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
+// 9. Cập nhật quảng cáo (chỉ cho sửa nếu status === pending)
+exports.updateAd = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { imageUrl, link } = req.body;
+
+    const ad = await Advertisement.findById(id);
+    if (!ad) {
+      return res.status(404).json({ message: "Không tìm thấy quảng cáo" });
+    }
+
+    if (imageUrl) ad.imageUrl = imageUrl;
+    if (link) ad.link = link;
+
+    await ad.save();
+    res.json({ message: "✅ Cập nhật quảng cáo thành công", ad });
+  } catch (err) {
+    console.error("❌ Lỗi updateAd:", err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
+
 
